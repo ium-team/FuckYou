@@ -1,6 +1,0 @@
-{
-  "last_turn_at": "2026-04-29T07:08:28.595Z",
-  "turn_count": 5,
-  "last_progress_at": "2026-04-29T07:08:28.595Z",
-  "last_agent_output": "요청하신 동작으로 구현해뒀습니다.\n\n변경 내용:\n- `fy` 기본 실행 시(`fy`, `fy --fast` 등) `--account`를 안 주면 매번 계정 선택 프롬프트를 띄움\n-"
-}
