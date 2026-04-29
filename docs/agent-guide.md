@@ -7,7 +7,7 @@ This file is the first document an AI agent should read before developing FY.
 - Make small, contract-preserving changes.
 - Prefer extending existing modules over adding new abstractions.
 - Keep user-facing behavior explicit in tests.
-- Update `.engineering` docs when a change alters architecture, account isolation, or runtime policy.
+- Update `docs/` when a change alters architecture, account isolation, or runtime policy.
 - Update `README.md` or `docs/` only when the user-facing behavior changes.
 
 ## Product Shape To Preserve

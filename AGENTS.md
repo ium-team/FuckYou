@@ -10,12 +10,12 @@ These instructions apply to the entire `fy/` tree.
 
 Before non-trivial changes, read:
 
-1. `.engineering/README.md`
-2. `.engineering/agent-guide.md`
-3. `.engineering/architecture.md`
-4. `.engineering/code-map.md`
-5. `.engineering/repo-local-codex.md`
-6. `.engineering/testing.md`
+1. `docs/README.md`
+2. `docs/agent-guide.md`
+3. `docs/architecture.md`
+4. `docs/code-map.md`
+5. `docs/repo-local-codex.md`
+6. `docs/testing.md`
 
 ## Product Direction
 
@@ -54,7 +54,7 @@ Do not:
 
 - Keep changes small and contract-focused.
 - Reuse existing modules before introducing new abstractions.
-- Update `.engineering` docs when architecture/contracts change.
+- Update `docs/` when architecture/contracts change.
 - Update user-facing docs only when user-facing behavior changes.
 
 ## Testing Rules

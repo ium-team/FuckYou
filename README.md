@@ -29,10 +29,10 @@ It does not yet call an AI provider or modify a real codebase through an agent l
 
 ## Documentation Layout
 
-- User-facing docs: `docs/`
-- FY development docs for agents and maintainers: `.engineering/`
+- Developer docs for FY service development: `docs/`
+- Collaboration workflow rules: `docs/collaboration-rules.md`
 
-`philosophy`, `architecture`, and `roadmap` for FY implementation are maintained in `.engineering/`.
+`philosophy`, `architecture`, and `roadmap` for FY implementation are maintained in `docs/`.
 
 ## Commands
 
