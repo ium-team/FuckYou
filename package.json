@@ -1,0 +1,23 @@
+{
+  "name": "fy",
+  "version": "0.1.0",
+  "description": "A lightweight personal AI operating layer with manual, auto, budget, and fast modes.",
+  "type": "module",
+  "private": true,
+  "bin": {
+    "fy": "dist/src/cli/index.js"
+  },
+  "scripts": {
+    "build": "tsc && node -e \"require('fs').chmodSync('dist/src/cli/index.js', 0o755)\"",
+    "check": "tsc --noEmit",
+    "test": "npm run build && node --test dist/tests/*.test.js",
+    "dev": "tsc --watch"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "typescript": "^6.0.3"
+  }
+}
