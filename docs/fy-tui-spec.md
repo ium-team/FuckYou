@@ -119,8 +119,9 @@ status_line = [
 
 Implementation note:
 
-- FY currently scaffolds `model-with-reasoning`, `current-dir`, `git-branch`, `context-used`, and `context-remaining`.
-- Add `five-hour-limit` and `weekly-limit` when the status-line merge code can preserve user-owned `[tui]` keys safely.
+- FY scaffolds the recommended built-in status-line items for new repo-local account homes.
+- Runtime `-c tui.status_line=...` injection respects explicit user-provided status-line overrides.
+- Structural TOML merge is still only needed when FY starts editing existing user-owned `[tui]` tables instead of using launch-time overrides.
 
 Status severity:
 

@@ -14,11 +14,12 @@ import { getModePolicy, isFyMode, listModePolicies } from "../modes/policies.js"
 import { launchCodex, parseModeArgs } from "../runtime/codex.js";
 import { createRunPlan } from "../runtime/plan.js";
 import { readState, updateMode, writeState } from "../state/store.js";
+import { executeFyCommand } from "../tui/commands.js";
 
 export const HELP = `fy - extensible repo-local AI operating layer
 
 Usage:
-  fy [--manual|--auto|--budget|--fast] [--fy-palette] [codex args...]
+  fy [--mode <mode>|--orchestrated|--fast-edit|--read-only|--implementation|--docs-harness] [--fy-palette] [codex args...]
   fy version
   fy doctor
   fy account list
@@ -27,8 +28,9 @@ Usage:
   fy account path [name]
   fy login [account]
   fy modes
-  fy mode [manual|auto|budget|fast]
-  fy exec [--account <name>] [--manual|--auto|--budget|--fast] [--fy-palette] "<task>"
+  fy mode [orchestrated|fast-edit|read-only|implementation|docs-harness]
+  fy slash "/fy-status"
+  fy exec [--account <name>] [--mode <mode>] [--fy-palette] "<task>"
   fy run "<task>"
 
 Default behavior launches Codex with FY mode instructions injected.`;
@@ -42,7 +44,7 @@ async function promptForLaunchAccount(cwd: string): Promise<AccountSelection | n
 
   const config = await readProjectConfig(cwd);
   const rl = createInterface({ input, output });
-  const accounts = config.accounts;
+  const accounts = Object.keys(config.accounts);
 
   try {
     console.log("Select a Codex account for this FY launch:");
@@ -50,7 +52,7 @@ async function promptForLaunchAccount(cwd: string): Promise<AccountSelection | n
       const account = accounts[index];
       const markers = [
         account === config.defaultAccount ? "default" : null,
-        account === config.lastUsedAccount ? "last-used" : null,
+        account === config.lastAccount ? "last-used" : null,
       ].filter(Boolean);
       const suffix = markers.length > 0 ? ` (${markers.join(", ")})` : "";
       console.log(`  ${index + 1}) ${account}${suffix}`);
@@ -143,10 +145,10 @@ export async function handleCommand(args: string[], cwd = process.cwd()): Promis
     const [subcommand, accountName] = rest;
     if (!subcommand || subcommand === "list") {
       const config = await readProjectConfig(cwd);
-      for (const account of config.accounts) {
+      for (const account of Object.keys(config.accounts)) {
         const markers = [
           account === config.defaultAccount ? "default" : null,
-          account === config.lastUsedAccount ? "last-used" : null,
+          account === config.lastAccount ? "last-used" : null,
         ].filter(Boolean);
         console.log(markers.length > 0 ? `${account} (${markers.join(", ")})` : account);
       }
@@ -221,6 +223,25 @@ export async function handleCommand(args: string[], cwd = process.cwd()): Promis
     return 0;
   }
 
+  if (command === "slash") {
+    const slashCommand = rest.join(" ").trim();
+    if (!slashCommand) {
+      console.error('Usage: fy slash "/fy-status"');
+      return 1;
+    }
+    const result = await executeFyCommand(slashCommand, cwd);
+    if (result.status === "error") {
+      console.error(result.message);
+      return 1;
+    }
+    if ("message" in result) {
+      console.log(result.message);
+    } else {
+      console.log(JSON.stringify(result, null, 2));
+    }
+    return result.status === "login-required" ? 2 : 0;
+  }
+
   if (command === "run") {
     const task = rest.join(" ").trim();
     if (!task) {
@@ -247,7 +268,7 @@ export async function handleCommand(args: string[], cwd = process.cwd()): Promis
     const parsed = parseModeArgs(rest);
     const task = parsed.args.join(" ").trim();
     if (!task) {
-      console.error('Usage: fy exec [--manual|--auto|--budget|--fast] "<task>"');
+      console.error('Usage: fy exec [--mode <mode>] "<task>"');
       return 1;
     }
     const current = await readState(cwd);

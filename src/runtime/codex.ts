@@ -1,6 +1,8 @@
 import { spawn } from "node:child_process";
 import { resolveAccount, markAccountUsed } from "../accounts/store.js";
+import { isFyMode } from "../modes/policies.js";
 import type { FyMode } from "../modes/types.js";
+import { updateActiveAccount } from "../state/store.js";
 import { writeModeInstructions } from "./instructions.js";
 
 const CONFIG_FLAG = "-c";
@@ -13,6 +15,8 @@ export const FY_STATUS_LINE_ITEMS = [
   "git-branch",
   "context-used",
   "context-remaining",
+  "five-hour-limit",
+  "weekly-limit",
 ] as const;
 
 export interface ModeArgResult {
@@ -150,20 +154,47 @@ export function parseModeArgs(args: string[]): ModeArgResult {
 
   for (let index = 0; index < args.length; index += 1) {
     const arg = args[index];
+    if (arg === "--mode") {
+      const requested = args[index + 1] ?? "";
+      if (isFyMode(requested)) mode = requested;
+      index += 1;
+      continue;
+    }
+    if (arg.startsWith("--mode=")) {
+      const requested = arg.slice("--mode=".length);
+      if (isFyMode(requested)) mode = requested;
+      continue;
+    }
+    if (arg === "--orchestrated") {
+      mode = "orchestrated";
+      continue;
+    }
+    if (arg === "--fast-edit" || arg === "--fast") {
+      mode = "fast-edit";
+      continue;
+    }
+    if (arg === "--read-only") {
+      mode = "read-only";
+      continue;
+    }
+    if (arg === "--implementation") {
+      mode = "implementation";
+      continue;
+    }
+    if (arg === "--docs-harness") {
+      mode = "docs-harness";
+      continue;
+    }
     if (arg === "--manual") {
-      mode = "manual";
+      mode = "implementation";
       continue;
     }
     if (arg === "--auto") {
-      mode = "auto";
+      mode = "orchestrated";
       continue;
     }
     if (arg === "--budget") {
-      mode = "budget";
-      continue;
-    }
-    if (arg === "--fast") {
-      mode = "fast";
+      mode = "fast-edit";
       continue;
     }
     if (arg === "--account") {
@@ -323,6 +354,7 @@ export async function launchCodex(
   const spawnFn = options.spawnFn ?? spawn;
   const account = await resolveAccount(options.account, cwd);
   await markAccountUsed(account.name, cwd);
+  await updateActiveAccount(account.name, cwd);
   const env = {
     ...baseEnv,
     CODEX_HOME: account.codexHome,

@@ -18,20 +18,26 @@ Active mode: ${policy.mode}
 Mode purpose: ${policy.description}
 
 Operating policy:
+- Edit policy: ${policy.edits}
+- Planning posture: ${policy.planning}
+- Question posture: ${policy.questions}
 - Approval posture: ${policy.approval}
 - Maximum loop count: ${policy.maxLoops}
 - Output style: ${policy.outputStyle}
 - Verification level: ${policy.verification}
+- Parallel agents: ${policy.parallelAgents}
+- tmux policy: ${policy.tmux}
 - Token posture: ${policy.tokenPosture}
 
 Behavior:
 - Keep the amount of process proportional to the task.
 - Prefer \`/fy\` as the primary FY slash entrypoint when available.
 - Do not introduce broad refactors unless the user asks for them.
-- For frontend/UI work, prefer small visible iterations and ask at natural review points.
-- For backend/internal logic, prefer direct implementation with clear verification.
-- For budget mode, keep outputs short and inspect only the context needed for the next action.
-- For auto mode, continue through plan, execution, and verification until a guardrail or repeated failure stops you.
+- If active mode is read-only, do not modify source files.
+- If active mode is orchestrated, create ownership metadata before parallel write work.
+- If active mode is fast-edit, use the smallest useful validation and escalate only on failure.
+- If active mode is docs-harness, keep edits to documentation or harness artifacts and mark assumptions.
+- If active mode is implementation, use targeted tests/checks for changed behavior.
 `;
 }
 

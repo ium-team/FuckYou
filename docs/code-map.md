@@ -21,9 +21,9 @@ Do not make new FY product workflows CLI-only when the requirement is TUI-first.
 
 ## TUI
 
-Planned files:
+Files:
 
-- `src/tui/*`
+- `src/tui/commands.ts`
 
 Responsibilities:
 
@@ -75,9 +75,10 @@ Responsibilities:
 
 ## Status
 
-Planned files:
+Files:
 
-- `src/status/*`
+- `src/status/model.ts`
+- `src/status/types.ts`
 
 Responsibilities:
 
@@ -103,6 +104,7 @@ Tests:
 
 - `tests/codex.test.ts`
 - `tests/runtime.test.ts`
+- `tests/status.test.ts`
 
 ## Modes
 
@@ -138,6 +140,7 @@ Responsibilities:
 Tests:
 
 - `tests/state.test.ts`
+- `tests/tui-commands.test.ts`
 
 ## Doctor
 
@@ -155,9 +158,10 @@ Future account checks should verify paths and auth presence without reading toke
 
 ## Context
 
-Planned files:
+Files:
 
-- `src/context/*`
+- `src/context/snapshots.ts`
+- `src/context/types.ts`
 
 Responsibilities:
 
@@ -166,32 +170,65 @@ Responsibilities:
 - support continuation when an account runs out of usable allowance,
 - avoid storing secrets.
 
+Tests:
+
+- `tests/context.test.ts`
+
+## Docs Harness
+
+Files:
+
+- `src/docs/harness.ts`
+- `src/docs/types.ts`
+
+Responsibilities:
+
+- create the recommended documentation harness when files are missing,
+- preserve existing docs during harness initialization,
+- append generated assumption-marked sections for targeted updates,
+- generate codebase summary docs from repo-local file layout.
+
+Tests:
+
+- `tests/docs-harness.test.ts`
+- `tests/tui-commands.test.ts`
+
 ## Orchestration
 
-Planned files:
+Files:
 
-- `src/orchestration/*`
+- `src/orchestration/store.ts`
+- `src/orchestration/types.ts`
 
 Responsibilities:
 
 - represent active agents,
 - assign task and file ownership,
+- persist run, agent, ownership, conflict, and trace files,
 - show orchestrated agents in tmux panes or an equivalent TUI surface,
 - detect overlapping edits,
 - coordinate final integration and verification.
 
+Tests:
+
+- `tests/orchestration.test.ts`
+- `tests/tui-commands.test.ts`
+
 ## tmux
 
-Planned files:
+Files:
 
-- `src/tmux/*`
+- `src/tmux/types.ts`
+- `src/tmux/guards.ts`
 
 Responsibilities:
 
-- create and identify panes,
+- define the tmux adapter boundary used by orchestration,
 - distinguish agent panes from status/HUD panes,
 - guard input injection with copy-mode, cooldown, dedupe, and pane caps,
 - protect leader pane from worker cleanup.
+
+Actual tmux process creation remains adapter-backed so tests can use fake tmux without requiring a live tmux session.
 
 ## Validation
 

@@ -19,6 +19,11 @@ As tooling hardens, Biome and c8 should become additional gates for lint/format 
 - Mode policy behavior: `tests/modes.test.ts`
 - Runtime plan behavior: `tests/runtime.test.ts`
 - State behavior: `tests/state.test.ts`
+- Status behavior: `tests/status.test.ts`
+- Context snapshot and continuation behavior: `tests/context.test.ts`
+- Documentation harness behavior: `tests/docs-harness.test.ts`
+- Orchestration state and ownership behavior: `tests/orchestration.test.ts`
+- TUI slash command parsing/routing: `tests/tui-commands.test.ts`
 
 ## What Must Be Tested
 

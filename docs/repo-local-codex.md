@@ -131,7 +131,7 @@ fy account add personal
 fy account use personal
 fy account path personal
 fy login personal
-fy --account personal --budget
+fy --account personal --mode fast-edit
 fy exec --account personal "task"
 ```
 

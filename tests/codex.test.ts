@@ -19,16 +19,16 @@ import {
 } from "../src/runtime/codex.js";
 
 test("mode flags are consumed before forwarding codex args", () => {
-  const parsed = parseModeArgs(["--budget", "--account", "work", "--model", "gpt-5"]);
-  assert.equal(parsed.mode, "budget");
+  const parsed = parseModeArgs(["--docs-harness", "--account", "work", "--model", "gpt-5"]);
+  assert.equal(parsed.mode, "docs-harness");
   assert.equal(parsed.account, "work");
   assert.equal(parsed.enableFyPalette, false);
   assert.deepEqual(parsed.args, ["--model", "gpt-5"]);
 });
 
 test("fy palette flag is parsed separately from forwarded codex args", () => {
-  const parsed = parseModeArgs(["--fast", "--fy-palette", "--model", "gpt-5"]);
-  assert.equal(parsed.mode, "fast");
+  const parsed = parseModeArgs(["--fast-edit", "--fy-palette", "--model", "gpt-5"]);
+  assert.equal(parsed.mode, "fast-edit");
   assert.equal(parsed.enableFyPalette, true);
   assert.deepEqual(parsed.args, ["--model", "gpt-5"]);
 
@@ -72,7 +72,7 @@ test("model instructions are injected unless already configured", () => {
 test("exec launch args write mode instructions and prefix codex exec", async () => {
   const cwd = await mkdtemp(join(tmpdir(), "fy-codex-"));
   try {
-    const args = await buildCodexArgs("budget", ["--model", "gpt-5"], {
+    const args = await buildCodexArgs("docs-harness", ["--model", "gpt-5"], {
       cwd,
       execTask: "fix validation",
     });
@@ -91,7 +91,7 @@ test("status line shows model, folder, branch, and context by default", () => {
     "--model",
     "gpt-5",
     "-c",
-    'tui.status_line=["model-with-reasoning", "current-dir", "git-branch", "context-used", "context-remaining"]',
+    'tui.status_line=["model-with-reasoning", "current-dir", "git-branch", "context-used", "context-remaining", "five-hour-limit", "weekly-limit"]',
   ]);
 });
 
@@ -112,7 +112,7 @@ test("launch sets CODEX_HOME to the selected repo-local account", async () => {
       return child;
     }) as unknown as typeof import("node:child_process").spawn;
 
-    const exitCode = await launchCodex("fast", [], {
+    const exitCode = await launchCodex("fast-edit", [], {
       cwd,
       account: "client",
       spawnFn: fakeSpawn,
@@ -137,7 +137,7 @@ test("fy palette request falls back to terminal-safe stdio", async () => {
       return child;
     }) as unknown as typeof import("node:child_process").spawn;
 
-    const exitCode = await launchCodex("fast", ["--fy-palette"], {
+    const exitCode = await launchCodex("fast-edit", ["--fy-palette"], {
       cwd,
       spawnFn: fakeSpawn,
       env: {},

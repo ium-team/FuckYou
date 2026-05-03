@@ -2,21 +2,27 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { getModePolicy, isFyMode, listModePolicies } from "../src/modes/policies.js";
 
-test("lists the four core operating modes", () => {
+test("lists the five documented operating modes", () => {
   assert.deepEqual(
     listModePolicies().map((policy) => policy.mode).sort(),
-    ["auto", "budget", "fast", "manual"],
+    ["docs-harness", "fast-edit", "implementation", "orchestrated", "read-only"],
   );
 });
 
-test("budget mode is explicitly low-token", () => {
-  const policy = getModePolicy("budget");
-  assert.equal(policy.tokenPosture, "low");
-  assert.equal(policy.outputStyle, "minimal");
-  assert.equal(policy.maxLoops > getModePolicy("fast").maxLoops, true);
+test("read-only mode forbids edits", () => {
+  const policy = getModePolicy("read-only");
+  assert.equal(policy.edits, "forbidden");
+  assert.equal(policy.verification, "evidence-only");
+});
+
+test("orchestrated mode requires ownership-capable orchestration", () => {
+  const policy = getModePolicy("orchestrated");
+  assert.equal(policy.planning, "required");
+  assert.equal(policy.parallelAgents, "allowed");
+  assert.equal(policy.tmux, "required-when-multi-agent");
 });
 
 test("mode validation rejects unknown strings", () => {
-  assert.equal(isFyMode("manual"), true);
+  assert.equal(isFyMode("implementation"), true);
   assert.equal(isFyMode("omx"), false);
 });
