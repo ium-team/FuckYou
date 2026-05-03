@@ -1,7 +1,7 @@
 {
   "name": "fy",
   "version": "0.1.0",
-  "description": "A lightweight personal AI operating layer with manual, auto, budget, and fast modes.",
+  "description": "A TUI-first repo-local Codex operating layer.",
   "type": "module",
   "private": true,
   "bin": {

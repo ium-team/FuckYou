@@ -12,21 +12,23 @@ This file is the first document an AI agent should read before developing FY.
 
 ## Product Shape To Preserve
 
-FY is not "OMX but smaller" in implementation detail.
-FY is a lightweight mode switch around Codex with repo-local account isolation.
+FY is an extensible operating layer around Codex with repo-local account isolation.
+The target product is TUI-first: FY should feel like a repository-local Codex instance with FY account, context, mode, and orchestration controls layered into the TUI.
 
 Default posture:
 
-- lightweight,
+- evolution-friendly,
 - repo-local,
+- TUI-first for user workflows,
 - explicit,
-- low ceremony,
-- easy to delete.
+- policy-driven,
+- contract-first.
 
 ## Before Editing
 
 Check the feature class:
 
+- TUI slash command or TUI status behavior: start in the future TUI/runtime surface, then keep shared policy in domain modules.
 - CLI command or flag: start in `src/cli/commands.ts`.
 - Codex launch behavior: start in `src/runtime/codex.ts`.
 - Account isolation: start in `src/accounts/store.ts`.
@@ -42,7 +44,8 @@ Then open the matching test file under `tests/`.
 - Do not copy, import, or symlink `~/.codex/auth.json`.
 - Do not add global install side effects.
 - Do not make `fy run` perform real AI execution; it is currently the plan preview surface.
-- Do not make team/multi-agent behavior part of the default path.
+- Keep coordination behavior explicit in policy and tests when adding it.
+- Do not implement new account, token, context, or orchestration behavior as CLI-only if the product requirement is TUI-first.
 
 ## Good Agent Output
 

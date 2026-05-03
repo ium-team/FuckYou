@@ -10,6 +10,7 @@ npm test
 ```
 
 `npm test` builds the project and runs compiled tests from `dist/tests`.
+As tooling hardens, Biome and c8 should become additional gates for lint/format and coverage.
 
 ## Test Placement
 
@@ -24,19 +25,32 @@ npm test
 Add or update tests when changing:
 
 - command parsing,
+- TUI command parsing or routing,
 - mode flag parsing,
 - account selection,
+- account picker data,
 - `CODEX_HOME` behavior,
 - Codex `-c` config injection,
+- TUI status-line fields,
 - state file shape,
+- context snapshot shape,
+- continuation behavior,
 - project config shape,
 - run plan shape.
+- TOML merge behavior,
+- Zod schemas for persisted state or command payloads,
+- orchestration ownership and conflict-control metadata,
+- MCP payload validation.
 
 ## What Not To Test With Real Services
 
 Do not require a real Codex login in automated tests.
 Do not launch the real Codex TUI in tests.
 Use fake `spawn` functions for launch behavior.
+Use fake status/allowance metadata for account picker and token-reset behavior.
+Do not test by reading real token contents.
+Do not require tmux for non-orchestrated mode tests.
+Use fake tmux or pane adapters for orchestration tests until an integration test explicitly targets tmux.
 
 ## Current Required Baseline
 
