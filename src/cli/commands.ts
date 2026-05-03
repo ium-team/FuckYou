@@ -15,10 +15,10 @@ import { launchCodex, parseModeArgs } from "../runtime/codex.js";
 import { createRunPlan } from "../runtime/plan.js";
 import { readState, updateMode, writeState } from "../state/store.js";
 
-export const HELP = `fy - lightweight personal AI operating layer
+export const HELP = `fy - extensible repo-local AI operating layer
 
 Usage:
-  fy [--manual|--auto|--budget|--fast] [codex args...]
+  fy [--manual|--auto|--budget|--fast] [--fy-palette] [codex args...]
   fy version
   fy doctor
   fy account list
@@ -28,7 +28,7 @@ Usage:
   fy login [account]
   fy modes
   fy mode [manual|auto|budget|fast]
-  fy exec [--account <name>] [--manual|--auto|--budget|--fast] "<task>"
+  fy exec [--account <name>] [--manual|--auto|--budget|--fast] [--fy-palette] "<task>"
   fy run "<task>"
 
 Default behavior launches Codex with FY mode instructions injected.`;
@@ -118,7 +118,11 @@ export async function handleCommand(args: string[], cwd = process.cwd()): Promis
       if (loginCode !== 0) return loginCode;
     }
 
-    return await launchCodex(mode, parsed.args, { cwd, account: selection.account });
+    return await launchCodex(mode, parsed.args, {
+      cwd,
+      account: selection.account,
+      enableFyPalette: parsed.enableFyPalette,
+    });
   }
 
   if (command === "version") {
@@ -260,7 +264,12 @@ export async function handleCommand(args: string[], cwd = process.cwd()): Promis
         createdAt: new Date().toISOString(),
       },
     }, cwd);
-    return await launchCodex(mode, [], { cwd, account: parsed.account, execTask: task });
+    return await launchCodex(mode, [], {
+      cwd,
+      account: parsed.account,
+      execTask: task,
+      enableFyPalette: parsed.enableFyPalette,
+    });
   }
 
   console.error(`Unknown command: ${command}`);

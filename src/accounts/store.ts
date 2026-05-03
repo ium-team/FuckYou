@@ -8,6 +8,15 @@ import type { FyProjectConfig, ResolvedAccount } from "./types.js";
 const ACCOUNT_NAME_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$/;
 const FY_ACCOUNT_STATUS_LINE =
   'status_line = ["model-with-reasoning", "current-dir", "git-branch", "context-used", "context-remaining"]';
+const FY_SKILL_CONTENTS = `---
+name: fy
+description: FY entrypoint for repo-local operating shortcuts
+---
+
+# FY
+
+Use \`/fy\` as the primary FY command entrypoint for this repository/account.
+`;
 
 async function ensureAccountConfigFile(codexHome: string): Promise<void> {
   const configPath = join(codexHome, "config.toml");
@@ -20,6 +29,13 @@ async function ensureAccountConfigFile(codexHome: string): Promise<void> {
     "",
   ].join("\n");
   await writeFile(configPath, contents, "utf-8");
+}
+
+async function ensureFySkillScaffold(codexHome: string): Promise<void> {
+  const skillPath = join(codexHome, "skills", "fy", "SKILL.md");
+  if (existsSync(skillPath)) return;
+  await mkdir(join(codexHome, "skills", "fy"), { recursive: true });
+  await writeFile(skillPath, FY_SKILL_CONTENTS, "utf-8");
 }
 
 export function projectConfigPath(cwd = process.cwd()): string {
@@ -116,6 +132,7 @@ export async function ensureAccount(account: string, cwd = process.cwd()): Promi
   const codexHome = codexHomePath(name, cwd);
   await mkdir(codexHome, { recursive: true });
   await ensureAccountConfigFile(codexHome);
+  await ensureFySkillScaffold(codexHome);
   await writeProjectConfig(nextConfig, cwd);
   return { name, codexHome, config: nextConfig };
 }

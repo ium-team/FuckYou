@@ -6,19 +6,52 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import {
   buildCodexArgs,
+  FY_PALETTE_PREFILL,
   hasModelInstructionsOverride,
   hasStatusLineOverride,
   injectModelInstructionsArgs,
   injectStatusLineArgs,
   launchCodex,
+  parseFyPaletteFlag,
   parseModeArgs,
+  resolveFyPaletteSelection,
+  shouldEnableFyPalette,
 } from "../src/runtime/codex.js";
 
 test("mode flags are consumed before forwarding codex args", () => {
   const parsed = parseModeArgs(["--budget", "--account", "work", "--model", "gpt-5"]);
   assert.equal(parsed.mode, "budget");
   assert.equal(parsed.account, "work");
+  assert.equal(parsed.enableFyPalette, false);
   assert.deepEqual(parsed.args, ["--model", "gpt-5"]);
+});
+
+test("fy palette flag is parsed separately from forwarded codex args", () => {
+  const parsed = parseModeArgs(["--fast", "--fy-palette", "--model", "gpt-5"]);
+  assert.equal(parsed.mode, "fast");
+  assert.equal(parsed.enableFyPalette, true);
+  assert.deepEqual(parsed.args, ["--model", "gpt-5"]);
+
+  assert.deepEqual(parseFyPaletteFlag(["--fy-palette", "--model", "gpt-5"]), {
+    enableFyPalette: true,
+    args: ["--model", "gpt-5"],
+  });
+});
+
+test("fy palette selection resolves known quick actions", () => {
+  assert.equal(resolveFyPaletteSelection("1")?.command, "/fy-fast");
+  assert.equal(resolveFyPaletteSelection("4")?.command, "/fy-team");
+  assert.equal(resolveFyPaletteSelection("9"), null);
+});
+
+test("fy palette trigger pre-fills the native slash entrypoint", () => {
+  assert.equal(FY_PALETTE_PREFILL, "/fy ");
+});
+
+test("fy palette enables only in interactive terminals", () => {
+  assert.equal(shouldEnableFyPalette(true, { stdinIsTTY: true, stdoutIsTTY: true }), true);
+  assert.equal(shouldEnableFyPalette(true, { stdinIsTTY: false, stdoutIsTTY: true }), false);
+  assert.equal(shouldEnableFyPalette(false, { stdinIsTTY: true, stdoutIsTTY: true }), false);
 });
 
 test("model instructions are injected unless already configured", () => {
@@ -88,6 +121,30 @@ test("launch sets CODEX_HOME to the selected repo-local account", async () => {
 
     assert.equal(exitCode, 0);
     assert.equal(capturedEnv?.CODEX_HOME, join(cwd, ".fy", "codex-homes", "client"));
+  } finally {
+    await rm(cwd, { recursive: true, force: true });
+  }
+});
+
+test("fy palette request falls back to terminal-safe stdio", async () => {
+  const cwd = await mkdtemp(join(tmpdir(), "fy-codex-"));
+  try {
+    let capturedStdio: unknown;
+    const fakeSpawn = ((_command: string, _args: string[], options: { stdio?: unknown }) => {
+      capturedStdio = options.stdio;
+      const child = new EventEmitter();
+      queueMicrotask(() => child.emit("exit", 0, null));
+      return child;
+    }) as unknown as typeof import("node:child_process").spawn;
+
+    const exitCode = await launchCodex("fast", ["--fy-palette"], {
+      cwd,
+      spawnFn: fakeSpawn,
+      env: {},
+    });
+
+    assert.equal(exitCode, 0);
+    assert.equal(capturedStdio, "inherit");
   } finally {
     await rm(cwd, { recursive: true, force: true });
   }

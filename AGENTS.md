@@ -19,15 +19,15 @@ Before non-trivial changes, read:
 
 ## Product Direction
 
-FY is a lightweight operating layer around Codex.
-Default behavior should stay lighter than OMX.
+FY is an extensible operating layer around Codex.
+Design choices should keep room for deeper orchestration as FY evolves.
 
 Preserve these constraints:
 
 - Keep behavior repo-local by default.
 - Keep global `~/.codex` untouched by FY commands.
 - Keep mode policy as explicit runtime behavior.
-- Keep CLI thin; move logic to domain modules.
+- Keep CLI as a stable entrypoint and place operational logic in domain modules.
 
 ## Repo-Local Codex Contract
 

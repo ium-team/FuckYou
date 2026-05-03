@@ -36,23 +36,33 @@ Examples:
 
 - One logical change per commit.
 - Avoid mixing refactor and feature behavior in one commit.
+- Keep formatting-only changes in a separate commit when practical.
 
 ### 2) Commit message format
 
 Use this format:
 
 ```text
-<type>(<scope>): <summary>
+<type>(<scope>): <subject>
 ```
 
 Allowed `type` values:
 
 - `feat`
 - `fix`
-- `docs`
 - `refactor`
+- `docs`
 - `test`
 - `chore`
+- `perf`
+- `ci`
+- `build`
+- `revert`
+
+Scope rules:
+
+- Scope is recommended and should map to a module (example: `accounts`, `runtime`, `modes`, `state`, `cli`, `tests`, `docs`).
+- Scope may be omitted for repo-wide or administrative commits.
 
 Examples:
 
@@ -60,13 +70,53 @@ Examples:
 - `fix(runtime): prevent CODEX_HOME fallback`
 - `docs(readme): explain repo-local account contract`
 
-### 3) Optional body guidance
+### 3) Subject line rules
 
-If needed, add a short body explaining:
+- Prefer 50 characters or less.
+- Use imperative, present-tense wording (`add`, `fix`, `remove`).
+- Do not end with a period.
+- Avoid vague subjects such as `update stuff`.
+
+### 4) Body rules (when needed)
+
+Add a body when context is not obvious.
+
+Focus on:
 
 - why the change is needed,
-- constraints,
-- behavior impact.
+- constraints or tradeoffs,
+- behavior impact and compatibility notes.
+
+Formatting guidance:
+
+- Wrap body lines around 72 characters when practical.
+
+### 5) Breaking change rules
+
+For incompatible behavior changes, include a footer:
+
+```text
+BREAKING CHANGE: <what changed and how to migrate>
+```
+
+- Describe the concrete impact.
+- Provide migration guidance if user or maintainer action is required.
+
+### 6) Issue linking rules
+
+When related issues exist, include one of:
+
+- `Refs #<id>` for related work.
+- `Closes #<id>` when the commit resolves the issue.
+
+### 7) Prohibited commit messages
+
+Do not use non-informative messages such as:
+
+- `WIP`
+- `temp`
+- `asdf`
+- `fix`
 
 ## Pull Request Rules
 

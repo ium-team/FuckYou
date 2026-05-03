@@ -12,7 +12,7 @@ export function buildModeInstructions(mode: FyMode): string {
   const policy = getModePolicy(mode);
   return `# FY Runtime Instructions
 
-You are running inside FY, a lightweight personal AI operating layer.
+You are running inside FY, an extensible repo-local AI operating layer.
 
 Active mode: ${policy.mode}
 Mode purpose: ${policy.description}
@@ -26,6 +26,7 @@ Operating policy:
 
 Behavior:
 - Keep the amount of process proportional to the task.
+- Prefer \`/fy\` as the primary FY slash entrypoint when available.
 - Do not introduce broad refactors unless the user asks for them.
 - For frontend/UI work, prefer small visible iterations and ask at natural review points.
 - For backend/internal logic, prefer direct implementation with clear verification.

@@ -35,6 +35,18 @@ test("account home gets a local codex config scaffold", async () => {
   }
 });
 
+test("account home gets a fy skill scaffold for slash menu discovery", async () => {
+  const cwd = await mkdtemp(join(tmpdir(), "fy-account-"));
+  try {
+    const account = await ensureAccount("work", cwd);
+    const skill = await readFile(join(account.codexHome, "skills", "fy", "SKILL.md"), "utf-8");
+    assert.match(skill, /name:\s*fy/);
+    assert.match(skill, /Use `\/fy` as the primary FY command entrypoint/);
+  } finally {
+    await rm(cwd, { recursive: true, force: true });
+  }
+});
+
 test("default account can be selected per project", async () => {
   const cwd = await mkdtemp(join(tmpdir(), "fy-account-"));
   try {
